@@ -45,6 +45,7 @@ class BasePage:
         self.find(locators.search_field).send_keys(value)
 
     def check_search_button_is_disabled(self):
+        self.wait.until(EC.element_attribute_to_include(locators.search_button, 'disabled'))
         assert self.find(locators.search_button).get_attribute('disabled'), 'Search button is not disabled'
 
     def check_search_button_is_enabled(self):
