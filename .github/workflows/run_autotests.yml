@@ -35,27 +35,21 @@ jobs:
       - name: Fetch artifact ID
         id: fetch-artifact
         run: |
-          response=$(curl -L -w "%{http_code}" -o response.json \
+          response=$(curl -L \
             -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.token }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "https://api.github.com/repos/alliskov/magento-UI_test_automation/actions/artifacts?name=allure-results")
-          
-          http_code=$(tail -n1 <<< "$response")
-          if [ "$http_code" -ne 200 ]; then
-            echo "Error fetching artifacts. HTTP code: $http_code"
-            cat response.json
-            exit 1
-          fi
-          
-          artifact_id=$(cat response.json | jq -r '.artifacts[0].id // empty')
+          echo "Response: $response"
+          echo "$response" | jq . # Посмотреть JSON-ответ
+      
+          artifact_id=$(echo "$response" | jq -r '.artifacts[0].id // empty')
           if [ -z "$artifact_id" ]; then
             echo "Artifact not found in the API response."
-            cat response.json
             exit 1
           fi
-      
           echo "artifact_id=$artifact_id" >> $GITHUB_ENV
-          
+      
       - name: Download artifact
         run: |
           curl -L -v \
@@ -64,6 +58,16 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "https://api.github.com/repos/alliskov/magento-UI_test_automation/actions/artifacts/$artifact_id/zip" \
             -o artifact.zip
+      
+      - name: Validate downloaded artifact
+        run: |
+          if [ ! -s artifact.zip ]; then
+            echo "artifact.zip is empty or missing. Download failed."
+            exit 1
+          fi
+          echo "File size: $(stat -c%s artifact.zip) bytes"
+          file artifact.zip
+          head -n 20 artifact.zip
 
       - name: Extract artifact
         run: |
