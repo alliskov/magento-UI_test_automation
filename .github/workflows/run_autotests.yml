@@ -19,19 +19,19 @@ on:
           - regression
           - smoke    
 
-jobs:
+jobs:  
   get-history:
-    runs-on: ubuntu_latest
+    runs-on: ubuntu-latest
     name: Get report history
     steps:
-      - name: Set up Python 
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10" 
-          
+          python-version: "3.10"
+
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y unzip jq
-          
+
       - name: Fetch artifact ID
         id: fetch-artifact
         run: |
