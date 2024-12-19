@@ -61,11 +61,22 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: "microsoft"
-          java-version: "17"          
-
-          
+          java-version: "17"
       - name: Install Allure
         run: sudo wget https://github.com/allure-framework/allure2/releases/download/2.32.0/allure-2.32.0.tgz && sudo tar -zxvf allure-2.32.0.tgz -C /opt/ && sudo ln -s /opt/allure-2.32.0/bin/allure /usr/bin/allure
+
+      - name: Download Allure history
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-history
+          path: allure-report/history
+
+      - name: Copy history to results
+        run: |
+          if [ -d allure-report/history ]; then
+            cp -r allure-report/history allure-results/
+          fi
+      
       - name: Generate report
         run: allure generate -c allure-results -o allure-report
       - name: Save report
@@ -84,21 +95,7 @@ jobs:
     needs: run-tests
     name: Report publication
     runs-on: ubuntu-latest
-    steps:
-    
-      - name: Download Allure history
-        uses: actions/download-artifact@v4
-        with:
-          name: allure-history
-          path: allure-report/history
-
-      - name: Copy history to results
-        run: |
-          if [ -d allure-report/history ]; then
-            cp -r allure-report/history allure-results/
-          fi
-      
-
+    steps: 
       - name: Download artifacts
         uses: actions/download-artifact@v4
       - name: Upload Pages artifact
