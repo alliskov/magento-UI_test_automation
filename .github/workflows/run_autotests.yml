@@ -28,14 +28,19 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: github_pages      
+
       
-      - name: Unpack history files
-      - run: |
+      - name: Unpack history files        
+        run: |
+          echo "PWD IS"
+          pwd
+          echo "ls -la IS"
+          ls -la
           mkdir report_history
           tar -xvf github_pages/artifact.tar -c report_history
 
       - name: Put history into allure-results directory
-      - run: |
+        run: |
           mkdir allure-results
           cp -r report_history/history allure-results
   
