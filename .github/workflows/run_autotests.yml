@@ -89,11 +89,9 @@ jobs:
         run: |
           mkdir report
           unzip report.zip -d report
-          tar -xvf report/artifact.tar -C report
-          ls -la report/history
+          tar -xvf report/artifact.tar -C report          
           rm -r allure-results/history
-          cp -r report/history/ allure-results
-          ls -la allure-results/history      
+          cp -r report/history/ allure-results               
 
       - name: Save reports history
         uses: actions/upload-artifact@v4
