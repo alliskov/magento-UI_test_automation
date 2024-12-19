@@ -27,14 +27,7 @@ jobs:
       - name: Download history artifact
         uses: actions/download-artifact@v4
         with:
-          path: github_pages
-          
-      - name: Check directories    
-      - run: | 
-          ls -la github_pages
-          echo "PWD IS"
-          pwd
-          ls -la
+          path: github_pages      
       
       - name: Unpack history files
       - run: |
