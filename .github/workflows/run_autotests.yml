@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       deployment_target:
-        description: select tests set
+        description: Select tests set
         required: true
         type: choice
         default: regression
