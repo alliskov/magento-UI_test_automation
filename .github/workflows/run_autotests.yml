@@ -47,6 +47,7 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     name: Run tests
+    needs: get-history
     steps:
       - name: Check out source repository
         uses: actions/checkout@v4
