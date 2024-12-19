@@ -60,6 +60,7 @@ jobs:
         run: |
           mkdir allure-results
           unzip artifact.zip -d allure-results
+          rm -r allure-results/history
                 
       - name: Fetch report ID        
         run: |
@@ -89,10 +90,13 @@ jobs:
         run: |
           mkdir report
           unzip report.zip -d report
-          tar -xvf report/artifact.tar -C report          
-          rm -r allure-results/history
-          cp -r report/history/ allure-results               
-
+          tar -xvf report/artifact.tar -C report
+          cp -r report/history/ allure-results          
+          echo "LS ALLURE RESULTS"
+          ls -la allure-results
+          echo "LS ALLURE RESULTS/HISTORY"
+          ls -la allure-results/history
+          
       - name: Save reports history
         uses: actions/upload-artifact@v4
         with:
