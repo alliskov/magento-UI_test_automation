@@ -20,10 +20,6 @@ on:
           - smoke    
 
 jobs:
-  get_allure_history:
-    runs-on: ubuntu-latest
-    name: Get Allure history
-      
 
 
   run-tests:
