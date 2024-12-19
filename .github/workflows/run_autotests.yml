@@ -1,6 +1,18 @@
 name: Magento UI autotests
 
-on: 
+on:
+  workflow_dispatch:
+    inputs:
+      deployment_target:
+        description: select tests set
+        required: true
+        type: choice
+        default: regression
+        options:
+          - all
+          - extended
+          - regression
+          - smoke    
 
 jobs:
   autotests:
