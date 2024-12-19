@@ -91,6 +91,7 @@ jobs:
           unzip report.zip -d report
           tar -xvf report/artifact.tar -C report
           ls -la report/history
+          rm -r allure-results/history
           cp -r report/history/ allure-results
           ls -la allure-results/history      
 
