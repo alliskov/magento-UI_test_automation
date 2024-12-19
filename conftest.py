@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime
 from faker import Faker
 from pages.sale_page import SalePage
 from pages.eco_friendly_page import EcoFriendly
@@ -15,7 +16,8 @@ def driver():
     options.add_argument("--disable-dev-shm-usage")
     chrome_driver = webdriver.Chrome(options=options)
     chrome_driver.maximize_window()
-    return chrome_driver
+    yield chrome_driver
+    chrome_driver.save_screenshot(f'{datetime.strftime(datetime.now(), "%d.%m.%Y_%H-%M-%S")}')
 
 
 @pytest.fixture()
