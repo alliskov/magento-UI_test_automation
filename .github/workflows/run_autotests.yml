@@ -27,8 +27,7 @@ jobs:
       - name: Download history artifact
         uses: actions/download-artifact@v4
         with:
-          path: github_pages
-      - run: ls -la
+          path: github_pages      
       
       - name: Put history files into allure-results directory
       - run: mkdir github_pages && unzip github_pages -d github_pages && tar -xvf github_pages/artifact.tar -c report_history
