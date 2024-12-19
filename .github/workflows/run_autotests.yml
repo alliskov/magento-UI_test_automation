@@ -20,18 +20,41 @@ on:
           - smoke    
 
 jobs:
-  run-tests:
-    runs-on: ubuntu-latest
-    name: Run tests
-    steps:    
-      - name: Restore Allure history
-        uses: actions/cache@v3
+
+  get-history:
+    runs-on: ubuntu_latest
+    name: Get reports history
+    steps:
+      - run: >
+          ARTIFACT_ID=$(curl -L 
+          -H "Accept: application/vnd.github+json" 
+          -H "X-GitHub-Api-Version: 2022-11-28" 
+          "https://api.github.com/repos/alliskov/magento-UI_test_automation/actions/artifacts?name=allure-results" 
+          | python3 -c "import sys, json; print(json.load(sys.stdin)['artifacts'][0]['id']);")
+          &&
+          curl -L 
+          -H "Accept: application/vnd.github+json" 
+          -H "Authorization: Bearer ${{ secrets.token }}" 
+          -H "X-GitHub-Api-Version: 2022-11-28" 
+          https://api.github.com/repos/alliskov/magento-UI_test_automation/actions/artifacts/$ARTIFACT_ID/zip 
+          -o artifact.zip   
+      - run: mkdir allure-results && unzip artifact.zip -d allure-results
+      - name: Save reports history
+        uses: actions/upload-artifact@v4
         with:
-          path: allure-report/history
-          key: ${{ runner.os }}-allure-history-${{ github.ref }}
-          restore-keys: |
-            ${{ runner.os }}-allure-history-
-    
+          name: allure-results
+          path: allure-results
+          retention-days: 1
+      
+  run-tests:
+    needs: get-history
+    runs-on: ubuntu-latest
+    name: Run tests    
+    steps:
+      - name: Set up Python 
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"    
       - name: Check out source repository
         uses: actions/checkout@v4
       - name: Set up Python 
@@ -40,6 +63,8 @@ jobs:
           python-version: "3.10"
       - name: Set up test environment
         run: pip install -r requirements.txt
+      - name: Download workflow artifacts
+        uses: actions/download-artifact@v4
       - name: Run all tests
         if: "github.event.inputs.deployment_target == 'all'"
         run: pytest --alluredir=allure-results
@@ -63,12 +88,6 @@ jobs:
           java-version: "17"
       - name: Install Allure
         run: sudo wget https://github.com/allure-framework/allure2/releases/download/2.32.0/allure-2.32.0.tgz && sudo tar -zxvf allure-2.32.0.tgz -C /opt/ && sudo ln -s /opt/allure-2.32.0/bin/allure /usr/bin/allure
-      - name: Put allure-results into artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results
-          path: allure-results
-          retention-days: 1
       - name: Generate report
         run: allure generate -c allure-results -o allure-report
       - name: Save report
