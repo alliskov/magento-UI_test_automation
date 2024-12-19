@@ -31,13 +31,13 @@ jobs:
 
       
       - name: Unpack history files        
-        run: |
-          echo "PWD IS"
-          pwd
-          echo "ls -la IS"
-          ls -la
+        run: |          
           mkdir report_history
-          tar -xvf github_pages/artifact.tar -c report_history
+          unzip github_pages -d report_history
+          ls -la
+          echo "::::::::::::::::::::::::::::::::::"
+          ls -la github_pages
+          # tar -xvf github_pages/artifact.tar -c report_history
 
       - name: Put history into allure-results directory
         run: |
