@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       deployment_target:
-        description: Select tests set
+        description: Select test set
         required: true
         type: choice
         default: regression
@@ -27,5 +27,16 @@ jobs:
           python-version: '3.10'
       - name: Set up test environment
         run: pip install -r requirements.txt
-      - name: Start tests
-        run: pytest
+      - name: Run all tests
+        if: 'github.event.inputs.deployment_target == "all"'
+        run: pytest --alluredir=allure-results
+      - name: Run extended test set
+        if: 'github.event.inputs.deployment_target == "extended"'
+        run: pytest -m extended
+      - name: Run regression test set
+        if: 'github.event.inputs.deployment_target == "regression"'
+        run: pytest -m regression
+      - name: Run smoke test set
+        if: 'github.event.inputs.deployment_target == "smoke"'
+        run: pytest -m smoke
+        
