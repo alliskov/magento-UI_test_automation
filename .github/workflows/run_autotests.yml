@@ -30,7 +30,8 @@ jobs:
           path: github-pages/ 
       
       - name: Unpack history files        
-        run: |          
+        run: |
+          find ~ -name 'github-pages' 
           mkdir report_history          
           ls -la github-pages
           echo "::::::::::::::::::::::::::::::::::"
