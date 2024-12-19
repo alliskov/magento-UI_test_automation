@@ -20,10 +20,9 @@ on:
           - smoke    
 
 jobs:
-
   get-history:
     runs-on: ubuntu_latest
-    name: Get reports history
+    name: Get report history
     steps:
       - name: Set up Python 
         uses: actions/setup-python@v5
