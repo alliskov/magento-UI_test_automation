@@ -20,6 +20,12 @@ on:
           - smoke    
 
 jobs:
+  get_allure_history:
+    runs-on: ubuntu-latest
+    name: Get Allure history
+      
+
+
   run-tests:
     runs-on: ubuntu-latest
     name: Run tests
@@ -69,7 +75,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: allure-history
-          path: allure-report/history
+          path: allure-history
 
       - name: Copy history to results
         run: |
