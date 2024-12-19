@@ -29,6 +29,9 @@ jobs:
         with:
           python-version: "3.10" 
           
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y unzip jq
+          
       - name: Fetch artifact ID
         id: fetch-artifact
         run: |
