@@ -1,4 +1,5 @@
 import allure
+import pytest
 
 
 @allure.suite('Magento Web')
@@ -6,6 +7,7 @@ import allure
 @allure.story('Positive')
 @allure.title('Eco Friendly page has correct title')
 @allure.severity('Minor')
+@pytest.mark.regression
 def test_sale_page_title(eco_friendly_page):
     eco_friendly_page.open_page()
     eco_friendly_page.check_tab_title_is('Eco Friendly')
@@ -16,6 +18,7 @@ def test_sale_page_title(eco_friendly_page):
 @allure.story('Positive')
 @allure.title('Eco Friendly page has correct headline')
 @allure.severity('Major')
+@pytest.mark.smoke
 def test_sale_page_headline(eco_friendly_page):
     eco_friendly_page.open_page()
     eco_friendly_page.check_page_headline_is('Eco Friendly')
@@ -26,6 +29,7 @@ def test_sale_page_headline(eco_friendly_page):
 @allure.story('Positive')
 @allure.title('Eco Friendly items list has default sort by position')
 @allure.severity('Minor')
+@pytest.mark.regression
 def test_default_sort_type_is_by_position(eco_friendly_page):
     eco_friendly_page.open_page()
     eco_friendly_page.check_active_sort_type_is_by('position')
@@ -36,6 +40,7 @@ def test_default_sort_type_is_by_position(eco_friendly_page):
 @allure.story('Positive')
 @allure.title('Eco Friendly items list has default ascendant sort direction')
 @allure.severity('Minor')
+@pytest.mark.regression
 def test_default_sort_direction_is_ascendant(eco_friendly_page):
     eco_friendly_page.open_page()
     eco_friendly_page.check_active_sort_direction_is('ascendant')
@@ -46,6 +51,7 @@ def test_default_sort_direction_is_ascendant(eco_friendly_page):
 @allure.story('Positive')
 @allure.title('Switch Eco Friendly items view mode from list to grid')
 @allure.severity('Minor')
+@pytest.mark.smoke
 def test_switch_view_mode_to_list(eco_friendly_page):
     eco_friendly_page.open_page()
     eco_friendly_page.check_active_view_mode_is('grid')
@@ -58,6 +64,7 @@ def test_switch_view_mode_to_list(eco_friendly_page):
 @allure.story('Positive')
 @allure.title('Search button enables if search field is not empty')
 @allure.severity('Minor')
+@pytest.mark.regression
 def test_search_button_enabled_if_input_is_not_empty(eco_friendly_page, random_value):
     eco_friendly_page.open_page()
     eco_friendly_page.check_search_button_is_disabled()
