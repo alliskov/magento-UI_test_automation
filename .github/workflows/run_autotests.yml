@@ -24,6 +24,14 @@ jobs:
     runs-on: ubuntu-latest
     name: Run tests
     steps:
+      - name: Restore Allure history
+        uses: actions/cache@v3
+        with:
+          path: allure-report/history
+          key: ${{ runner.os }}-allure-history-${{ github.ref }}
+          restore-keys: |
+            ${{ runner.os }}-allure-history-
+    
       - name: Check out source repository
         uses: actions/checkout@v4
       - name: Set up Python 
@@ -53,6 +61,11 @@ jobs:
         with:
           distribution: "microsoft"
           java-version: "17"
+      - name: Copy Allure history to results
+        run: |
+          if [ -d allure-report/history ]; then
+            cp -r allure-report/history allure-results/
+          fi
       - name: Install Allure
         run: sudo wget https://github.com/allure-framework/allure2/releases/download/2.32.0/allure-2.32.0.tgz && sudo tar -zxvf allure-2.32.0.tgz -C /opt/ && sudo ln -s /opt/allure-2.32.0/bin/allure /usr/bin/allure
       - name: Generate report
