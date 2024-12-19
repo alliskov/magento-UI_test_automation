@@ -20,90 +20,105 @@ on:
           - smoke    
 
 jobs:
-
-
   run-tests:
     runs-on: ubuntu-latest
     name: Run tests
     steps:
-    
       - name: Restore Allure history
         uses: actions/cache@v3
         with:
-          path: allure-report/history
+          path: allure-results/history
           key: ${{ runner.os }}-allure-history-${{ github.ref }}
           restore-keys: |
             ${{ runner.os }}-allure-history-
-    
+
       - name: Check out source repository
         uses: actions/checkout@v4
+
       - name: Set up Python 
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
+
       - name: Set up test environment
         run: pip install -r requirements.txt
+
       - name: Run all tests
         if: "github.event.inputs.deployment_target == 'all'"
         run: pytest --alluredir=allure-results
         continue-on-error: true
+
       - name: Run extended test set
         if: "github.event.inputs.deployment_target == 'extended'"
         run: pytest -m extended --alluredir=allure-results
         continue-on-error: true
+
       - name: Run regression test set
         if: "github.event.inputs.deployment_target == 'regression'"
         run: pytest -m regression --alluredir=allure-results
         continue-on-error: true
+
       - name: Run smoke test set
         if: "github.event.inputs.deployment_target == 'smoke'"
         run: pytest -m smoke --alluredir=allure-results
         continue-on-error: true
-      - name: Install Java      
+
+      - name: Install Java
         uses: actions/setup-java@v4
         with:
           distribution: "microsoft"
           java-version: "17"
+
       - name: Install Allure
-        run: sudo wget https://github.com/allure-framework/allure2/releases/download/2.32.0/allure-2.32.0.tgz && sudo tar -zxvf allure-2.32.0.tgz -C /opt/ && sudo ln -s /opt/allure-2.32.0/bin/allure /usr/bin/allure
-
-      - name: Download Allure history
-        uses: actions/download-artifact@v4
-        with:
-          name: allure-history
-          path: allure-history
-
-      - name: Copy history to results
         run: |
-          if [ -d allure-report/history ]; then
+          sudo wget https://github.com/allure-framework/allure2/releases/download/2.32.0/allure-2.32.0.tgz && \
+          sudo tar -zxvf allure-2.32.0.tgz -C /opt/ && \
+          sudo ln -s /opt/allure-2.32.0/bin/allure /usr/bin/allure
+
+      - name: Copy Allure history to results
+        run: |
+          if [ -d allure-results/history ]; then
+            rm -r allure-results/history
+            echo "History already exists in allure-results."
+          elif [ -d allure-report/history ]; then
             cp -r allure-report/history allure-results/
+            echo "History copied from allure-report to allure-results."
+          else
+            echo "No history found to copy."
           fi
-      
-      - name: Generate report
+
+      - name: Generate Allure report
         run: allure generate -c allure-results -o allure-report
-      - name: Save report
+
+      - name: Save Allure history
+        uses: actions/cache@v3
+        with:
+          path: allure-report/history
+          key: ${{ runner.os }}-allure-history-${{ github.ref }}
+
+      - name: Save Allure report
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: allure-report
-          retention-days: 1
-      - name: Save report history
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-history
-          path: allure-report/history
+          retention-days: 7
 
   publish-report:
     needs: run-tests
     name: Report publication
     runs-on: ubuntu-latest
     steps: 
-      - name: Download artifacts
+      - name: Download Allure report artifact
         uses: actions/download-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report/
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: allure-report/
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
