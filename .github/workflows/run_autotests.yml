@@ -92,9 +92,9 @@ jobs:
           unzip report.zip -d report
           tar -xvf report/artifact.tar -C report
           cp -r report/history/ allure-results          
-          echo "LS ALLURE RESULTS"
-          ls -la allure-results
-          echo "LS ALLURE RESULTS/HISTORY"
+          echo "LS REPORT/HISTORY"
+          ls -la report/history
+          echo "LS ALLURE-RESULTS/HISTORY"
           ls -la allure-results/history
           
       - name: Save reports history
