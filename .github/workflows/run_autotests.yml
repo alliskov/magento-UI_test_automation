@@ -27,14 +27,12 @@ jobs:
       - name: Download history artifact
         uses: actions/download-artifact@v4
         with:
-          path: github-pages      
-
+          path: github-pages/ 
       
       - name: Unpack history files        
         run: |          
-          mkdir report_history
-          
-          ls -la
+          mkdir report_history          
+          ls -la github-pages
           echo "::::::::::::::::::::::::::::::::::"
           ls -la report_history
           # tar -xvf github-pages/artifact.tar -c report_history
@@ -92,7 +90,7 @@ jobs:
       - name: Generate report
         run: allure generate -c allure-results -o allure-report
       
-      - name: Save report
+      - name: Upload report as artifact
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
