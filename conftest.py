@@ -17,7 +17,7 @@ def driver():
     chrome_driver = webdriver.Chrome(options=options)
     chrome_driver.maximize_window()
     yield chrome_driver
-    chrome_driver.save_screenshot(f'{datetime.strftime(datetime.now(), "%d.%m.%Y_%H-%M-%S")}.png')
+    chrome_driver.save_screenshot(f'./screenshots/{datetime.strftime(datetime.now(), "%d.%m.%Y_%H-%M-%S")}.png')
 
 
 @pytest.fixture()
