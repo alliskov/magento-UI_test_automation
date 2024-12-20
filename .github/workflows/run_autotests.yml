@@ -33,19 +33,24 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "https://api.github.com/repos/alliskov/magento-UI_test_automation/actions/artifacts?name=allure-results")
-            
+
+          echo "API Response: $response"
+              
           artifact_id=$(echo "$response" | jq -r '.artifacts[0].id // empty')
+          
           if [ -n "$artifact_id" ]; then
-            run: |
-              curl -L \
-                -H "Accept: application/vnd.github+json" \
-                -H "Authorization: Bearer ${{ secrets.token }}" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                "https://api.github.com/repos/alliskov/magento-UI_test_automation/actions/artifacts/$artifact_id/zip" \
-                -o artifact.zip
-                mkdir allure-results
-                unzip artifact.zip -d allure-results
-                rm -r allure-results/history
+            echo "Artifact found with ID: $artifact_id"
+            
+            curl -L \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.token }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/alliskov/magento-UI_test_automation/actions/artifacts/$artifact_id/zip" \
+              -o artifact.zip
+                
+            mkdir allure-results
+            unzip artifact.zip -d allure-results
+            rm -r allure-results/history
             echo "artifact_id=$artifact_id" >> $GITHUB_ENV            
           else:
             echo "Results not found or empty response."
@@ -61,18 +66,20 @@ jobs:
           
           report_id=$(echo "$response" | jq -r '.artifacts[0].id // empty')
           if [ -n "$report_id" ]; then
-            run: |
-              curl -L \
-                -H "Accept: application/vnd.github+json" \
-                -H "Authorization: Bearer ${{ secrets.token }}" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                "https://api.github.com/repos/alliskov/magento-UI_test_automation/actions/artifacts/$report_id/zip" \
-                -o report.zip
-                mkdir report
-                unzip report.zip -d report
-                tar -xvf report/artifact.tar -C report
-                cp -r report/history/ allure-results
-            echo "report_id=$report_id" >> $GITHUB_ENV
+          echo "Report found with ID: $report_id"
+          
+            curl -L \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.token }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/alliskov/magento-UI_test_automation/actions/artifacts/$report_id/zip" \
+              -o report.zip
+              
+            mkdir report
+            unzip report.zip -d report
+            tar -xvf report/artifact.tar -C report
+            cp -r report/history/ allure-results
+            echo "report_id=$report_id" >> $GITHUB_ENV            
           else:
             echo "Report not found or empty response."
             exit 1
@@ -84,7 +91,6 @@ jobs:
           name: allure-results
           path: allure-results
           retention-days: 1
-
       
   run-tests:
     needs: get-history
